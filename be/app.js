@@ -1,23 +1,23 @@
-import express from "express";
-import cors from "cors";
-import fs from "fs";
-import bcrypt from "bcrypt";
-import role_router from "./routes/UserRole.js";
-import category_router from "./routes/ProdcutCategories.js";
-import product_router from "./routes/Products.js";
-import user_router from "./routes/Users.js";
+import express from 'express'
+import cors from 'cors'
+import fs from 'fs'
+import bcrypt from 'bcrypt'
+import role_router from './routes/UserRole.js'
+import category_router from './routes/ProdcutCategories.js'
+import product_router from './routes/Products.js'
+import user_router from './routes/Users.js'
 
-const app = express();
+const app = express()
 
-const PORT = 8080;
-const SALT_ROUNDS = 10;
+const PORT = 8282
+const SALT_ROUNDS = 10
 
-app.use(cors());
-app.use(express.json());
-app.use(role_router);
-app.use(category_router);
-app.use(product_router);
-app.use(user_router);
+app.use(cors())
+app.use(express.json())
+app.use(role_router)
+app.use(category_router)
+app.use(product_router)
+app.use(user_router)
 
 /*--------------- GET /product/ --------------*/
 // app.get("/products", (request, response) => {
@@ -340,32 +340,32 @@ app.use(user_router);
 // });
 
 /*------------ POST /user login/ ------------*/
-app.post("/login", (request, response) => {
-  const body = request.body;
+app.post('/login', (request, response) => {
+  const body = request.body
 
-  fs.readFile("./public/data/users.json", "utf-8", (readError, readData) => {
+  fs.readFile('./public/data/users.json', 'utf-8', (readError, readData) => {
     if (readError) {
       response.json({
-        status: "file not found",
+        status: 'file not found',
         data: [],
-      });
+      })
     }
 
-    const usersArrayObject = JSON.parse(readData);
+    const usersArrayObject = JSON.parse(readData)
 
     const foundUser = usersArrayObject.filter(
       (user) => body.email === user.email
-    );
+    )
 
     if (foundUser.length === 0) {
       response.json({
-        status: "user not found",
+        status: 'user not found',
         data: [],
-      });
+      })
     } else {
-      const foundUserObj = foundUser[0];
-      const plainPassword = body.password;
-      const savedPassword = foundUserObj.password;
+      const foundUserObj = foundUser[0]
+      const plainPassword = body.password
+      const savedPassword = foundUserObj.password
 
       bcrypt.compare(
         plainPassword,
@@ -373,51 +373,51 @@ app.post("/login", (request, response) => {
         (compareError, compareResult) => {
           if (compareError) {
             response.json({
-              status: "Username or password do not match",
-            });
+              status: 'Username or password do not match',
+            })
           }
 
           if (compareResult) {
             response.json({
-              status: "success",
+              status: 'success',
               data: {
                 email: foundUserObj.email,
                 firstname: foundUserObj.firstname,
                 lastname: foundUserObj.lastname,
               },
-            });
+            })
           } else {
             response.json({
-              status: "Username or password do not match",
+              status: 'Username or password do not match',
               data: [],
-            });
+            })
           }
         }
-      );
+      )
     }
-  });
-});
+  })
+})
 
 /// API get all user roles
 
-app.get("/users/roles", (request, response) => {
-  fs.readFile("./public/data/role.json", "utf-8", (readError, readData) => {
+app.get('/users/roles', (request, response) => {
+  fs.readFile('./public/data/role.json', 'utf-8', (readError, readData) => {
     if (readError) {
       response.json({
-        status: "file does not exist",
+        status: 'file does not exist',
         data: [],
-      });
+      })
     }
 
-    const dataObject = JSON.parse(readData);
+    const dataObject = JSON.parse(readData)
 
     response.json({
-      status: "success",
+      status: 'success',
       data: dataObject,
-    });
-  });
-});
+    })
+  })
+})
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+  console.log(`Server is running on http://localhost:${PORT}`)
+})
